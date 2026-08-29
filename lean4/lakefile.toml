@@ -12,12 +12,12 @@ warningAsError = true
 
 [[require]]
 name = "mathlib"
-git = "https://github.com/leanprover-community/mathlib4.git"
+git = "https://github.com/leanprover-community/mathlib4"
 rev = "6f6d267d6dab648062ec50502204cf512cd7274f"
 
 [[require]]
 name = "KostkaNumbers"
-git = "https://github.com/NoahW314/KostkaNumbers.git"
+git = "https://github.com/NoahW314/KostkaNumbers"
 rev = "135e49269833f4a760717b30777046d9629240df"
 
 [[lean_lib]]

@@ -21,6 +21,15 @@ New-Item -ItemType Directory -Force -Path $destination | Out-Null
 Expand-Archive -LiteralPath $archivePath -DestinationPath $destination -Force
 
 foreach ($entry in $metadata.files) {
+  $sourcePath = Join-Path $repoRoot ($entry.source_path -replace '/', '\')
+  if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
+    throw "Missing bound source file: $($entry.source_path)"
+  }
+  $sourceHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $sourcePath).Hash.ToLowerInvariant()
+  if ($sourceHash -ne $entry.source_sha256) {
+    throw "Source SHA-256 mismatch: $($entry.source_path)"
+  }
+
   $path = Join-Path $repoRoot ($entry.cache_path -replace '/', '\')
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
     throw "Missing restored cache file: $($entry.cache_path)"
