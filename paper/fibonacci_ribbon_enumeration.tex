@@ -1,0 +1,897 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\SYT}{\operatorname{SYT}}
+\newcommand{\ellp}{\ell}
+
+\title{Exact Enumeration and Fixed-Rank Asymptotics\\
+of Ballot-Admissible Fibonacci Ribbons}
+\author{Alex Chengyu Li}
+\date{29 August 2026}
+\hypersetup{
+  pdftitle={Exact Enumeration and Fixed-Rank Asymptotics of Ballot-Admissible Fibonacci Ribbons},
+  pdfauthor={Alex Chengyu Li}
+}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{minipage}{0.88\textwidth}
+\textbf{Formalization status.}
+All 47 numbered theorem, corollary, lemma, and equation labels have
+premise-free publication endpoints in the accompanying
+\href{https://github.com/crabsatellite/fibonacci-ribbon-ballot-enumeration}{Lean~4 development}.
+The complete publication root is checked with \texttt{--trust=0}; its axiom
+audit reports only \texttt{propext}, \texttt{Classical.choice}, and
+\texttt{Quot.sound}.
+\end{minipage}
+\end{center}
+\medskip
+
+\begin{abstract}
+Tenn asked for the enumeration of ballot-admissible Fibonacci ribbon
+tableaux beyond the three-letter case.  We give an exact formula for every
+alphabet size.  If $b_{n,k}$ denotes the number of ballot-admissible
+$\operatorname{Fib}(n,k)$ ribbons and $f^\lambda$ is the number of standard
+Young tableaux of shape $\lambda$, then
+\[
+ b_{n,k}=\sum_{j=0}^{\lfloor k/2\rfloor}(-1)^j
+ \binom{k-j}{j}
+ \sum_{\substack{\lambda\vdash k-2j\\\ellp(\lambda)\le n}}f^\lambda.
+\]
+The proof encodes the columns as a dominant type-$A$ walk alternating between
+the defining representation and its dual.  The unrestricted mixed walk has
+the bounded-height standard-tableau count, while each forbidden adjacency is
+a ballot-neutral block; endpoint-preserving contraction and
+inclusion--exclusion give both the formula and a highest-weight refinement in
+explicit Schur coefficients.
+
+The resulting generating-function substitution, together with Gessel's
+finite-dimensional Bessel system and Regev's strip asymptotics, yields an
+explicit constant $K_n>0$ such that, for every fixed $n\ge3$,
+\[
+ b_{n,k}\sim K_n
+ \left(\frac{n+\sqrt{n^2-4}}2\right)^k k^{-n(n-1)/4}.
+\]
+For $n\ge k$, the count stabilizes to involutions with no adjacent
+transposition.  Their number is asymptotic to $e^{-1}$ times the involution
+number, proving a conjecture recorded in OEIS~A170941.  More generally, for
+each fixed $r$, the defect on the line $n=k-r$ is eventually a polynomial in
+$k$ of degree $r-1$ with an explicit leading coefficient.
+\end{abstract}
+
+\section{Introduction}
+
+Fibonacci ribbons are alternating-height skew tableaux introduced by
+Donnelly, Dunkum, Li\v{s}kov\'a, and Nance in their study of symmetric
+Fibonaccian distributive lattices and special-linear representations
+\cite{DonnellyEtAl2023}.  A ribbon is ballot-admissible when it is a
+Littlewood--Richardson tableau.  For three letters, empirical data suggested
+the peakless Motzkin numbers.  Tenn proved that conjecture and constructed an
+explicit bijection, then left the enumeration of
+$\operatorname{Fib}(n,k)$ for $n\ge4$ as an open problem
+\cite{Tenn2026}.
+
+The main result of this paper is an exact finite formula for every $n$ and
+$k$.  The derivation uses two structural facts.  First, if the
+single local semistandard obstruction is temporarily allowed, the alternating
+short and tall columns form a mixed defining/dual branching walk.  Although
+the endpoint distributions depend on which factors are dual, their total
+multiplicity does not.  Second, each forbidden adjacent pair reads exactly
+$12\cdots n$, so it may be deleted without changing any ballot difference.
+The obstruction sets are matchings of a path, and inclusion--exclusion gives
+the answer.
+
+The contraction preserves the final dominant weight, which yields a
+highest-weight refinement in explicit Schur coefficients.  The ordinary
+generating function is obtained from the bounded-tableau series by a rational
+substitution.  Combining this substitution with Gessel's finite-dimensional
+Bessel system and Regev's strip asymptotics gives, for every fixed $n\ge3$,
+an explicit constant $K_n$ such that
+\[
+ b_{n,k}\sim K_n
+ \left(\frac{n+\sqrt{n^2-4}}2\right)^k
+ k^{-n(n-1)/4}.
+\]
+
+The stable range leads to a second theme.  The sum of the numbers of standard
+tableaux of all shapes of size $k$ is the involution number.  The same
+path-matching inclusion--exclusion excludes the cycles $(i,i+1)$.  This
+identifies the stable ribbon numbers with OEIS~A170941 and supplies a short
+Poisson-limit proof of the conjectural limiting proportion recorded there
+\cite{OEISA170941}.
+
+The approach to stability is also explicit.  On every fixed-distance line
+$n=k-r$, the deficit from the stable count is a finite sum of bounded-tail
+tableau numbers and is eventually a polynomial in $k$ of degree $r-1$.
+Together with the fixed-rank asymptotic, this also shows that the two natural
+iterated density limits do not commute.
+
+\section{Fibonacci ribbons and column parameters}
+
+Fix integers $n\ge2$ and $k\ge0$.  The Fibonacci ribbon shape has $k$
+columns.  From right to left their heights alternate between $1$ and $n-1$,
+starting with height $1$.  Entries lie in $[n]=\{1,\ldots,n\}$, columns are
+strictly increasing, and rows are weakly increasing.  The linear word is read
+column by column from right to left and within a column from top to bottom.
+The tableau is ballot-admissible if every prefix $w'$ of this word satisfies
+\[
+ \#_1(w')\ge\#_2(w')\ge\cdots\ge\#_n(w').
+\]
+These are the conventions of \cite{DonnellyEtAl2023,Tenn2026}.
+
+Parameterize the $c$th column from the right by $a_c\in[n]$.  If $c$ is odd,
+the column is the singleton $a_c$.  If $c$ is even, it contains every element
+of $[n]$ except
+\[
+ y_c=n+1-a_c,
+\]
+in increasing order.  The Fibonaccian-string condition from
+\cite[Theorem~4.2]{DonnellyEtAl2023}, translated from left-to-right to
+right-to-left order, becomes
+\begin{equation}\label{eq:local-obstruction}
+ (a_c,a_{c+1})\ne(1,n).
+\end{equation}
+Thus the local obstruction is unique.
+
+For a prefix $w$, define its difference vector
+\[
+ d(w)=(d_1,\ldots,d_{n-1}),\qquad
+ d_i=\#_i(w)-\#_{i+1}(w).
+\]
+The ballot condition is $d(w)\in\mathbb Z_{\ge0}^{n-1}$ at every prefix.
+Put
+\[
+ v_1=e_1,\qquad
+ v_x=-e_{x-1}+e_x\ (1<x<n),\qquad
+ v_n=-e_{n-1}.
+\]
+
+\begin{lemma}[Literal column walk]\label{lem:column-walk}
+Reading a singleton $x$ changes $d$ by $v_x$.  Reading a tall column omitting
+$y$ changes $d$ by $-v_y$.  In either case the column may be appended to a
+ballot prefix exactly when the resulting difference vector is nonnegative.
+\end{lemma}
+
+\begin{proof}
+The singleton statement follows directly from the definition of the
+differences.  A full increasing block $12\cdots n$ returns every difference
+to its initial value and stays nonnegative when started from a nonnegative
+vector.  Omitting $y$ therefore has net increment $-v_y$.
+
+It remains to check internal prefixes.  Before the omitted position, the
+increasing letters merely move one unit of surplus to the right.  If $y<n$,
+the only possible new violation occurs when $y+1$ is read, and it occurs
+exactly when the final coordinate required by $d-v_y\ge0$ is absent.  If
+$y=n$, there is no later letter and no additional condition.  Hence endpoint
+nonnegativity is necessary and sufficient.
+\end{proof}
+
+Let $b_{n,k}$ denote the desired ribbon count.  Let $u_{n,k}$ denote the
+number obtained from the same ballot column words when
+Equation~\eqref{eq:local-obstruction} is not imposed.
+
+\section{The unrestricted mixed branching walk}
+
+Let $D_n=\mathbb Z_{\ge0}^{n-1}$.  On functions on $D_n$, let $A$ be the
+adjacency operator for the valid steps $v_x$, and let $B$ be the adjacency
+operator for the valid steps $-v_y$.  All sums below are finite at every
+state.
+
+\begin{lemma}[Mixed branching]\label{lem:mixed-branching}
+The operators $A$ and $B$ commute, and
+\[
+ A\mathbf1=B\mathbf1,
+\]
+where $\mathbf1$ is the constant-one function on $D_n$.
+\end{lemma}
+
+\begin{proof}
+The vectors $v_x-v_y$ are distinct when $x\ne y$.  For such a pair, the
+validity conditions of the two steps are independent except when $x=y+1$.
+In that exceptional case, both orders are valid exactly when $d_y\ge2$:
+each step lowers the same boundary coordinate by one.  Hence a step $v_x$
+followed by $-v_y$ is valid if and only if the reverse order is valid for
+every $x\ne y$, so the off-diagonal matrix entries of $AB$ and $BA$ agree.
+
+For a zero-displacement two-step walk, the two letters must have $x=y$.
+The number of valid $A$-moves from $d$ is
+\[
+ 1+\#\{i:d_i>0\};
+\]
+the always-valid move is $x=1$.  The number of valid $B$-moves is the same,
+with always-valid move $y=n$.  Hence the diagonal entries also agree and
+$AB=BA$.  The same outdegree calculation gives
+$A\mathbf1=B\mathbf1$.
+\end{proof}
+
+\begin{theorem}[Unrestricted count]\label{thm:unrestricted}
+For every $n\ge2$ and $k\ge0$,
+\begin{equation}\label{eq:unrestricted}
+ u_{n,k}=\sum_{\substack{\lambda\vdash k\\\ellp(\lambda)\le n}}f^\lambda,
+\end{equation}
+where $f^\lambda=|\SYT(\lambda)|$.
+\end{theorem}
+
+\begin{proof}
+There are $a=\lceil k/2\rceil$ defining steps and
+$c=\lfloor k/2\rfloor$ dual steps.  If $\delta_0$ is evaluation at the zero
+weight, the total unrestricted count is
+\[
+ \delta_0 A^aB^c\mathbf1.
+\]
+Lemma~\ref{lem:mixed-branching} gives, inductively,
+$B^r\mathbf1=A^r\mathbf1$: indeed
+\[
+ B^{r+1}\mathbf1=BA^r\mathbf1=A^rB\mathbf1=A^{r+1}\mathbf1.
+\]
+Consequently $u_{n,k}=\delta_0A^k\mathbf1$.
+
+A path of $k$ defining steps from zero is a word
+$x_1\cdots x_k$ on $[n]$ whose prefix multiplicities are weakly decreasing.
+Place $j$ in row $x_j$.  Rows increase because positions are inserted in
+order, and the prefix inequalities say precisely that every entry has a cell
+above it when required.  This is a standard Young tableau with at most $n$
+rows.  Reading the row containing each successive entry reverses the
+construction.  Summing over shapes proves Equation~\eqref{eq:unrestricted}.
+\end{proof}
+
+By the hook-length formula,
+\begin{equation}\label{eq:hook}
+ f^\lambda=\frac{k!}{\prod_{z\in\lambda}h(z)}
+ \qquad(\lambda\vdash k),
+\end{equation}
+so Equation~\eqref{eq:unrestricted} is directly computable.
+Robinson--Schensted also identifies $u_{n,k}$ with the number of involutions
+of $[k]$ whose longest decreasing subsequence has length at most $n$.
+
+\section{Exact enumeration by neutral-block contraction}
+
+\begin{lemma}[Neutral bad pairs]\label{lem:neutral-pairs}
+Suppose a specified adjacency satisfies $(a_c,a_{c+1})=(1,n)$.  Its two
+columns have combined linear word $12\cdots n$.  Deleting the two columns is
+a bijection between unrestricted ballot column words having that specified
+bad pair and unrestricted ballot column words of length $k-2$.
+
+More generally, if $j$ pairwise disjoint adjacencies are specified to be bad,
+simultaneously deleting them is a bijection with unrestricted objects of
+length $k-2j$.
+\end{lemma}
+
+\begin{proof}
+If $c$ is odd, the two blocks are the singleton $1$ and the tall column
+$2\cdots n$.  If $c$ is even, they are $1\cdots(n-1)$ and the singleton $n$.
+Their concatenation is $12\cdots n$ in both cases.  This block returns every
+difference to its initial value, and every internal prefix is ballot.
+Deletion and insertion are inverse operations.  Removing two columns
+preserves the parity of every later column, so the argument applies
+simultaneously to any disjoint collection.
+\end{proof}
+
+Bad adjacencies cannot overlap, since a shared parameter would have to equal
+both $1$ and $n$.  Sets of $j$ possible bad locations are therefore the
+$j$-edge matchings of a path on $k$ vertices, of which there are
+\begin{equation}\label{eq:path-matchings}
+ \binom{k-j}{j}.
+\end{equation}
+
+\begin{theorem}[Fibonacci-ribbon enumeration]\label{thm:main}
+For every $n\ge2$ and $k\ge0$,
+\begin{equation}\label{eq:main}
+ \boxed{
+ b_{n,k}=\sum_{j=0}^{\lfloor k/2\rfloor}(-1)^j
+ \binom{k-j}{j}
+ \sum_{\substack{\lambda\vdash k-2j\\\ellp(\lambda)\le n}}f^\lambda.}
+\end{equation}
+Equations~\eqref{eq:hook} and~\eqref{eq:main} give a finite explicit formula.
+\end{theorem}
+
+\begin{proof}
+Apply inclusion--exclusion to the $k-1$ bad-adjacency events.  An intersection
+is empty unless its locations form a matching.  For a matching of size $j$,
+Lemma~\ref{lem:neutral-pairs} identifies the intersection with the
+unrestricted objects counted by $u_{n,k-2j}$.  Use
+Equations~\eqref{eq:path-matchings} and~\eqref{eq:unrestricted}.
+\end{proof}
+
+The same contraction retains the final dominant weight and therefore admits
+a highest-weight refinement.  For a dominant difference vector
+$d=(d_1,\ldots,d_{n-1})$, let
+\[
+ \mu_i=d_i+d_{i+1}+\cdots+d_{n-1}\quad(1\le i<n),
+ \qquad \mu_n=0.
+\]
+Thus $\mu$ is the normalized partition representing the corresponding
+$\mathfrak{sl}_n$ highest weight.  Let $b_{n,k}^{\mu}$ count admissible
+ribbons whose column walk ends at this weight.  Put
+\[
+ a=\left\lceil\frac{k}{2}\right\rceil,
+ \qquad c=\left\lfloor\frac{k}{2}\right\rfloor.
+\]
+For nonnegative $r,s$, define
+\begin{equation}\label{eq:mixed-schur-multiplicity}
+ M_{r,s}^{(n)}(\mu)=
+ \begin{cases}
+ \left\langle p_1^r e_{n-1}^s,
+ s_{\mu+(q^n)}\right\rangle,
+ &q=\dfrac{r+(n-1)s-|\mu|}{n}\in\mathbb Z_{\ge0},\\[6pt]
+ 0,&\text{otherwise},
+ \end{cases}
+\end{equation}
+where the bracket denotes the Schur coefficient, and
+$\mu+(q^n)=(\mu_1+q,\ldots,\mu_n+q)$.
+
+\begin{theorem}[Highest-weight refinement]\label{thm:highest-weight}
+For every normalized dominant partition $\mu$,
+\begin{equation}\label{eq:highest-weight}
+ \boxed{
+ b_{n,k}^{\mu}=
+ \sum_{j=0}^{\lfloor k/2\rfloor}(-1)^j\binom{k-j}{j}
+ M_{a-j,c-j}^{(n)}(\mu).}
+\end{equation}
+Summing Equation~\eqref{eq:highest-weight} over $\mu$ recovers
+Theorem~\ref{thm:main}.
+\end{theorem}
+
+\begin{proof}
+Let $V$ be the defining $SL_n$-module.  As an $SL_n$-module,
+$V^*\cong\bigwedge^{n-1}V$.  Hence the polynomial $GL_n$ character whose
+restriction describes $V^{\otimes r}\otimes(V^*)^{\otimes s}$ is
+$p_1^r e_{n-1}^s$.  A polynomial $GL_n$ constituent $S_\lambda V$ restricts
+to normalized $SL_n$ highest weight $\mu$ exactly when
+$\lambda=\mu+(q^n)$ for some $q\ge0$.  Homogeneous degree forces
+$|\lambda|=r+(n-1)s$, so $q$ is the unique integer in
+Equation~\eqref{eq:mixed-schur-multiplicity}.  The Pieri branching paths to
+$\mu$ are therefore counted by $M_{r,s}^{(n)}(\mu)$
+\cite{StanleyEC2}.
+
+Every selected bad adjacency contains one defining and one dual column.
+Deleting its full-alphabet block changes $(a,c)$ to $(a-1,c-1)$ but has zero
+difference displacement, so it preserves the final highest weight.  The
+simultaneous contraction of $j$ disjoint bad pairs therefore has endpoint
+multiplicity $M_{a-j,c-j}^{(n)}(\mu)$.  Endpointwise inclusion--exclusion
+proves Equation~\eqref{eq:highest-weight}.  Summation over all endpoints is
+the unrestricted endpoint functional used in Theorem~\ref{thm:unrestricted},
+which gives the last assertion.
+\end{proof}
+
+The first rows, beginning at $k=0$, are
+\begin{center}
+\small
+\begin{tabular}{c|rrrrrrrrrrrrr}
+\toprule
+$n\backslash k$&0&1&2&3&4&5&6&7&8&9&10&11&12\\
+\midrule
+2&1&1&1&1&1&1&1&1&1&1&1&1&1\\
+3&1&1&1&2&4&8&17&37&82&185&423&978&2283\\
+4&1&1&1&2&5&12&31&82&229&646&1891&5574&16883\\
+5&1&1&1&2&5&13&36&105&321&1018&3334&11216&38635\\
+6&1&1&1&2&5&13&37&111&355&1179&4099&14665&54299\\
+\bottomrule
+\end{tabular}
+\end{center}
+For $n=3$, Theorem~\ref{thm:main} recovers the peakless Motzkin numbers and
+therefore agrees with the bijection of \cite{Tenn2026}.
+
+\section{Generating functions and finite-rank structure}
+
+Put
+\[
+ U_n(z)=\sum_{k\ge0}u_{n,k}z^k,
+ \qquad B_n(z)=\sum_{k\ge0}b_{n,k}z^k.
+\]
+For fixed $n$ these are convergent near the origin.  They may also be read as
+formal power series.
+
+\begin{theorem}[Exact substitution]\label{thm:substitution}
+For every $n\ge2$,
+\begin{equation}\label{eq:substitution}
+ B_n(z)=\frac{1}{1+z^2}
+ U_n\!\left(\frac{z}{1+z^2}\right).
+\end{equation}
+Consequently $B_n(z)$ is D-finite for every fixed $n$.
+\end{theorem}
+
+\begin{proof}
+In Theorem~\ref{thm:main}, put $m=k-2j$ and sum over $k$.  The elementary
+identity
+\[
+ \sum_{j\ge0}\binom{m+j}{j}t^j=(1-t)^{-m-1}
+\]
+gives
+\begin{align*}
+ B_n(z)
+ &=\sum_{m\ge0}u_{n,m}z^m
+   \sum_{j\ge0}(-1)^j\binom{m+j}{j}z^{2j}\\
+ &=\frac{1}{1+z^2}
+   \sum_{m\ge0}u_{n,m}
+   \left(\frac{z}{1+z^2}\right)^m.
+\end{align*}
+For fixed $n$, the bounded-height tableau sequence $u_{n,m}$ is
+$P$-recursive; equivalently its generating function is D-finite
+\cite{Gessel1990}.  D-finite series are closed under multiplication by a
+rational function and algebraic substitution, proving the last assertion.
+\end{proof}
+
+The substitution is invertible as a formal series.  If
+\[
+ \psi(w)=\frac{1-\sqrt{1-4w^2}}{2w}=w+w^3+2w^5+\cdots,
+\]
+then $\psi/(1+\psi^2)=w$ and
+\begin{equation}\label{eq:inverse-substitution}
+ U_n(w)=(1+\psi(w)^2)B_n(\psi(w)).
+\end{equation}
+Thus the ribbon and bounded-involution enumerations determine one another.
+
+For $n=3$, $u_{3,k}$ is the Motzkin number, so
+$U_3=1+zU_3+z^2U_3^2$.  Equation~\eqref{eq:substitution} simplifies to
+\[
+ B_3(z)=1+zB_3(z)+z^2B_3(z)(B_3(z)-1),
+\]
+which is exactly the peakless-Motzkin decomposition used in
+\cite{Tenn2026}.  For $n=2$, the same substitution reduces to
+$B_2(z)=1/(1-z)$, agreeing with $b_{2,k}=1$.
+
+The substitution in fact transfers the complete leading strip asymptotic in
+every fixed rank.  Put
+\[
+ \beta_n=\frac{n(n-1)}4,
+ \qquad
+ \alpha_n=\frac{n+\sqrt{n^2-4}}2,
+\]
+and
+\begin{equation}\label{eq:regev-constant}
+ C_n=\frac{n^{\beta_n}}{n!}
+ \prod_{j=1}^n\frac{\Gamma(1+j/2)}{\Gamma(3/2)}.
+\end{equation}
+
+\begin{theorem}[Fixed-rank asymptotic]\label{thm:fixed-rank-asymptotic}
+For every fixed $n\ge3$,
+\begin{equation}\label{eq:fixed-rank-asymptotic}
+ b_{n,k}\sim K_n\alpha_n^k k^{-\beta_n},
+ \qquad
+ K_n=C_n\frac{\alpha_n}{n}
+ \left(\frac{\sqrt{n^2-4}}{n}\right)^{\beta_n-1}.
+\end{equation}
+For $n=2$, one has $b_{2,k}=1$ exactly.
+\end{theorem}
+
+\begin{proof}
+Regev's strip theorem, with the Mehta integral evaluated explicitly, gives
+\begin{equation}\label{eq:regev-leading}
+ u_{n,k}\sim C_n n^k k^{-\beta_n}
+\end{equation}
+\cite{Regev1981,Matsumoto2008}.  It remains to justify that no other
+singularity becomes dominant under Equation~\eqref{eq:substitution}.
+
+Let
+\[
+ Y_n(x)=\sum_{k\ge0}u_{n,k}\frac{x^k}{k!},
+ \qquad
+ J_r(x)=\sum_{m\ge0}\frac{x^{2m+r}}{m!(m+r)!}.
+\]
+Write $d=\lfloor n/2\rfloor$.  Gessel's determinant, in the simplified form
+of Bergeron and Gascon, places $Y_n$ in the $\mathbb C(x)$-span
+\[
+ \{J_0^aJ_1^{d-a}:0\le a\le d\}
+\]
+when $n=2d$, and in $e^x$ times this span when $n=2d+1$
+\cite{Gessel1990,BergeronGascon2000}.  The coefficients may be taken to be
+Laurent polynomials in $x$: the recurrence reducing every $J_r$ to $J_0,J_1$
+introduces only powers of $x^{-1}$.  The identities
+\[
+ J_0'=2J_1,
+ \qquad
+ J_1'=2J_0-x^{-1}J_1
+\]
+therefore give a basis vector $\mathbf F$ satisfying an exact system
+\begin{equation}\label{eq:bessel-system}
+ \mathbf F'(x)=(M_0+x^{-1}M_1)\mathbf F(x)
+\end{equation}
+for constant matrices $M_0,M_1$.  In the basis generated by
+$J_0+J_1$ and $J_0-J_1$, the eigenvalues of $M_0$ are
+\begin{equation}\label{eq:bessel-scales}
+ n,n-4,n-8,\ldots,n-4d.
+\end{equation}
+Indeed the two generators have limiting derivative eigenvalues $2$ and
+$-2$, and the odd case adds the derivative eigenvalue $1$ of $e^x$.
+
+Expand $\mathbf F=\sum_{k\ge0}\mathbf f_kx^k/k!$ and put
+$\widehat{\mathbf F}(z)=\sum_{k\ge0}\mathbf f_kz^k$.  Multiplying
+Equation~\eqref{eq:bessel-system} by $x$ and comparing coefficients gives
+\[
+ (kI-M_1)\mathbf f_k=kM_0\mathbf f_{k-1}.
+\]
+After summation,
+\begin{equation}\label{eq:ordinary-bessel-system}
+ z(I-zM_0)\widehat{\mathbf F}'(z)
+ =(M_1+zM_0)\widehat{\mathbf F}(z)-M_1\mathbf f_0.
+\end{equation}
+Multiplication by a Laurent monomial in the exponential-generating variable
+becomes a finite combination of shifts, derivatives, and integrals of the
+ordinary generating function; it introduces no new nonzero finite
+singularity.  Consequently every nonzero finite singularity of $U_n$ belongs to
+\[
+ \left\{\frac1{n-4j}:0\le j\le d,\ n-4j\ne0\right\}.
+\]
+These are regular singularities, so their coefficient contributions are
+finite sums of the standard power--logarithm forms.
+Equation~\eqref{eq:regev-leading} and Pringsheim's theorem identify $1/n$ as
+the leading positive singularity and fix its leading coefficient term.
+When $n$ is even, $-1/n$ is the only other point of the same modulus; its
+coefficient contribution is of lower order, since otherwise the even and
+odd subsequences would contradict the common asymptotic
+Equation~\eqref{eq:regev-leading}.  Every remaining scale has modulus
+strictly smaller than $n$.
+
+Let $w(z)=z/(1+z^2)$ and $\rho_n=\alpha_n^{-1}$.  The positive singularity
+$1/n$ has the simple preimage $\rho_n$.  For a nonzero scale $\lambda$ with
+$|\lambda|<n$, the closest preimage of $1/\lambda$ has modulus
+\[
+ \frac{2}{|\lambda|+\sqrt{\lambda^2-4}}>\rho_n
+\]
+when $|\lambda|\ge2$, and modulus one when $|\lambda|\le2$.  Thus every
+smaller scale has all its preimages at strictly larger modulus.  The possible
+point $-1/n$ maps to $-\rho_n$ and remains of lower coefficient order.  At
+the positive point,
+\[
+ \frac{\rho_n w'(\rho_n)}{1/n}=\frac{\sqrt{n^2-4}}n,
+ \qquad
+ \frac1{1+\rho_n^2}=\frac{\alpha_n}{n}.
+\]
+The standard power--logarithm transfer theorem
+\cite[Chapter~VI]{FlajoletSedgewick2009}, including its logarithmic form when
+$\beta_n$ is an integer, therefore multiplies the coefficient constant $C_n$
+by the two factors displayed in
+Equation~\eqref{eq:fixed-rank-asymptotic}.  This proves the result.
+\end{proof}
+
+The first dimension left open by Tenn admits a particularly explicit form.
+Let $C_r=\frac1{r+1}\binom{2r}{r}$.
+
+\begin{corollary}[The four-letter case]\label{cor:n-four}
+Define
+\[
+ c_{2r}=C_rC_{r+1},\qquad c_{2r+1}=C_{r+1}^2.
+\]
+Then
+\begin{equation}\label{eq:n-four-sum}
+ b_{4,k}=\sum_{j=0}^{\lfloor k/2\rfloor}
+ (-1)^j\binom{k-j}{j}c_{k-2j}.
+\end{equation}
+Moreover,
+\begin{equation}\label{eq:n-four-asymptotic}
+ b_{4,k}\sim
+ \frac{6(2+\sqrt3)}{\pi}
+ (2+\sqrt3)^k k^{-3}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+The bounded-height tableau formula
+\[
+ u_{4,2r}=C_rC_{r+1},\qquad u_{4,2r+1}=C_{r+1}^2
+\]
+is classical \cite{GouyouBeauchamps1989}.  Substitution in
+Theorem~\ref{thm:main} gives Equation~\eqref{eq:n-four-sum}.
+Equation~\eqref{eq:regev-constant} gives $C_4=32/\pi$.  Applying
+Theorem~\ref{thm:fixed-rank-asymptotic}, with
+$\beta_4=3$, $\alpha_4=2+\sqrt3$, and
+$\sqrt{4^2-4}/4=\sqrt3/2$, gives
+Equation~\eqref{eq:n-four-asymptotic}.
+\end{proof}
+
+The next rank also admits a closed recurrence and a complete transferred
+asymptotic.  Put
+\[
+ \alpha_5=\frac{5+\sqrt{21}}2.
+\]
+
+\begin{corollary}[The five-letter case]\label{cor:n-five}
+Let $c_m=u_{5,m}$, with $c_0=c_1=1$, $c_2=2$.  For $m\ge3$ these numbers
+satisfy
+\begin{align}\label{eq:height-five-recurrence}
+ &(m+4)(m+6)c_m-(3m^2+17m+15)c_{m-1}\\
+ &\quad{}-(m-1)(13m+9)c_{m-2}
+ +15(m-1)(m-2)c_{m-3}=0.\notag
+\end{align}
+The ribbon number is
+\begin{equation}\label{eq:n-five-sum}
+ b_{5,k}=\sum_{j=0}^{\lfloor k/2\rfloor}
+ (-1)^j\binom{k-j}{j}c_{k-2j},
+\end{equation}
+and
+\begin{equation}\label{eq:n-five-asymptotic}
+ b_{5,k}\sim
+ \frac{1323\alpha_5}{8\pi}\,
+ \alpha_5^k k^{-5}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+The height-five recurrence is the bounded-tableau recurrence of
+Bergeron and Gascon \cite{BergeronGascon2000};
+Equation~\eqref{eq:n-five-sum} is Theorem~\ref{thm:main}.
+Equation~\eqref{eq:regev-constant} gives $C_5=9375/(8\pi)$.  Now
+Theorem~\ref{thm:fixed-rank-asymptotic}, with $\beta_5=5$ and local scale
+$\sqrt{21}/5$, gives
+\[
+ \frac{9375}{8\pi}\frac{\alpha_5}{5}
+ \left(\frac{\sqrt{21}}5\right)^4
+ =\frac{1323\alpha_5}{8\pi},
+\]
+which is Equation~\eqref{eq:n-five-asymptotic}.
+\end{proof}
+
+The next rank provides another explicit recurrence.  Put
+$\alpha_6=3+2\sqrt2$.
+
+\begin{corollary}[The six-letter case]\label{cor:n-six}
+Let $c_m=u_{6,m}$, with $c_0=c_1=1$, $c_2=2$, and $c_3=4$.  For $m\ge4$,
+\begin{align}\label{eq:height-six-recurrence}
+ &(m+5)(m+8)(m+9)c_m
+ -4(5m^2+46m+84)c_{m-1}\notag\\
+ &\quad{}-4(m-1)(10m^2+58m+33)c_{m-2}
+ +144(m-1)(m-2)c_{m-3}\notag\\
+ &\quad{}+144(m-1)(m-2)(m-3)c_{m-4}=0.
+\end{align}
+Moreover,
+\begin{equation}\label{eq:n-six-sum}
+ b_{6,k}=\sum_{j=0}^{\lfloor k/2\rfloor}
+ (-1)^j\binom{k-j}{j}c_{k-2j},
+\end{equation}
+and
+\begin{equation}\label{eq:n-six-asymptotic}
+ b_{6,k}\sim
+ \frac{3\,2^{57/4}\alpha_6}{\pi^{3/2}}
+ \alpha_6^k k^{-15/2}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+The differential equation for $Y_6$ in Bergeron and Gascon
+\cite{BergeronGascon2000}, after coefficient extraction, is precisely
+Equation~\eqref{eq:height-six-recurrence}.  Equation~\eqref{eq:n-six-sum}
+is Theorem~\ref{thm:main}.  Finally,
+Equation~\eqref{eq:regev-constant} gives
+\[
+ C_6=\frac{3}{4}\frac{6^{15/2}}{\pi^{3/2}}.
+\]
+Theorem~\ref{thm:fixed-rank-asymptotic} has
+$\beta_6=15/2$ and local scale $\sqrt{32}/6=2\sqrt2/3$; simplifying
+\[
+ C_6\frac{\alpha_6}{6}
+ \left(\frac{2\sqrt2}{3}\right)^{13/2}
+\]
+gives the constant in Equation~\eqref{eq:n-six-asymptotic}.
+\end{proof}
+
+\section{Stable involutions}
+
+Let $I_k$ be the number of involutions of $[k]$.  Robinson--Schensted gives a
+bijection between involutions and standard Young tableaux, because an
+involution has equal insertion and recording tableaux
+\cite{Sagan2001,StanleyEC2}.  Thus
+\begin{equation}\label{eq:involution-tableaux}
+ I_k=\sum_{\lambda\vdash k}f^\lambda,
+ \qquad I_k=I_{k-1}+(k-1)I_{k-2}.
+\end{equation}
+
+\begin{corollary}[Stable range]\label{cor:stable}
+If $n\ge k$, then $b_{n,k}$ is the number $a_k$ of involutions of $[k]$
+having no cycle $(i,i+1)$.  Equivalently, it is the number of matchings in
+the complement of the path $P_k$.  In particular,
+\begin{equation}\label{eq:stable-ie}
+ a_k=\sum_{j=0}^{\lfloor k/2\rfloor}(-1)^j
+ \binom{k-j}{j}I_{k-2j}.
+\end{equation}
+The initial values are
+\[
+1,1,1,2,5,13,37,112,363,1235,4427,16526,\ldots.
+\]
+\end{corollary}
+
+\begin{proof}
+When $n\ge k$, every partition of $k-2j$ has at most $n$ rows, so
+Theorem~\ref{thm:main} and Equation~\eqref{eq:involution-tableaux} give
+Equation~\eqref{eq:stable-ie}.  To exclude adjacent transpositions directly,
+apply inclusion--exclusion to the path edges $(i,i+1)$.  A nonempty
+intersection requires a matching of $j$ path edges.  Once those $j$
+transpositions are fixed, the remaining $k-2j$ labels support an arbitrary
+involution.  There are $\binom{k-j}{j}$ such matchings, giving the same sum.
+\end{proof}
+
+The first finite-rank corrections below stability are also explicit.  For
+$s,m\ge0$, put
+\begin{equation}\label{eq:tail-tableaux}
+ E_s(m)=\sum_{\substack{\lambda\vdash m\\m-\lambda_1\le s}}f^\lambda.
+\end{equation}
+
+\begin{corollary}[Near-stable defect]\label{cor:near-stable}
+Fix $r\ge1$ and let $k\ge r+2$.  Then
+\begin{equation}\label{eq:near-stable-defect}
+ a_k-b_{k-r,k}
+ =\sum_{0\le j<r/2}(-1)^j\binom{k-j}{j}
+ E_{r-2j-1}(k-2j).
+\end{equation}
+For each fixed $r$, this defect is eventually a polynomial in $k$ of degree
+$r-1$ with leading coefficient $I_{r-1}/(r-1)!$.  The first four strips are
+\begin{align}\label{eq:first-near-stable-strips}
+ b_{k-1,k}&=a_k-1,\notag\\
+ b_{k-2,k}&=a_k-k,\notag\\
+ b_{k-3,k}&=a_k-(k-1)(k-2),\\
+ b_{k-4,k}&=a_k-\frac{(k-2)(2k^2-8k+3)}3.\notag
+\end{align}
+\end{corollary}
+
+\begin{proof}
+Subtract Theorem~\ref{thm:main}, with $n=k-r$, from the stable formula
+Equation~\eqref{eq:stable-ie}.  At the term $m=k-2j$, the missing tableau
+shapes have more than $k-r$ rows.  Conjugating their diagrams preserves
+$f^\lambda$ and turns this condition into
+\[
+ \lambda_1>k-r=m-(r-2j),
+\]
+so their total is exactly $E_{r-2j-1}(m)$.  There is no defect once
+$2j\ge r$, proving Equation~\eqref{eq:near-stable-defect}.
+
+For fixed $s$, write every shape in Equation~\eqref{eq:tail-tableaux} as
+$(m-t,\nu)$ with $0\le t\le s$ and $\nu\vdash t$.  The hook-length formula
+shows that $f^{(m-t,\nu)}$ is eventually a polynomial in $m$ of degree $t$
+with leading coefficient $f^\nu/t!$.  Consequently $E_s(m)$ is eventually
+a polynomial of degree $s$ with leading coefficient
+$\sum_{\nu\vdash s}f^\nu/s!=I_s/s!$.  Thus the $j=0$ term in
+Equation~\eqref{eq:near-stable-defect} supplies degree $r-1$ with the stated
+leading coefficient, while every later term has smaller degree.  Finally,
+direct hook-length evaluation gives
+\[
+ E_0(m)=1,\quad E_1(m)=m,\quad E_2(m)=(m-1)^2,\quad
+ E_3(m)=\frac{m(m-2)(2m-5)}3,
+\]
+in the ranges used above.  Substitution proves
+Equation~\eqref{eq:first-near-stable-strips}.
+\end{proof}
+
+In particular, the stability threshold $n\ge k$ is sharp for every $k\ge3$:
+the immediately preceding rank has exactly one fewer object.
+
+The stable sequence is OEIS~A170941 \cite{OEISA170941}.  Substitution of the
+involution recurrence into Equation~\eqref{eq:stable-ie}, followed by
+Pascal's identity, gives the useful recurrence
+\begin{equation}\label{eq:stable-recurrence}
+ a_{k+1}=a_k+k a_{k-1}-a_{k-2}+a_{k-3}\qquad(k\ge3),
+\end{equation}
+with $a_0=a_1=a_2=1$ and $a_3=2$.
+
+For $n=3$, the standard arc representation identifies the peakless Motzkin
+specialization with noncrossing involutions having no adjacent transposition;
+see also the RNA arc-diagram setting of \cite{GilLopez2023}.
+
+\section{The limiting proportion}
+
+Let $\Pi_k$ be a uniformly random involution on $[k]$, and let
+\[
+ X_k=\#\{i:(i,i+1)\text{ is a cycle of }\Pi_k\}.
+\]
+
+\begin{theorem}[Poisson limit]\label{thm:poisson}
+As $k\to\infty$,
+\[
+ X_k\ \xrightarrow{d}\ \operatorname{Poisson}(1).
+\]
+Consequently
+\begin{equation}\label{eq:e-minus-one}
+ \frac{a_k}{I_k}\longrightarrow e^{-1}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+For fixed $r$, the falling factorial $(X_k)_r$ orders $r$ distinct adjacent
+transpositions.  They can occur simultaneously exactly when their path edges
+form a matching.  Fixing them leaves an arbitrary involution on the remaining
+labels, so
+\begin{equation}\label{eq:factorial-moments}
+ \mathbb E[(X_k)_r]
+ =r!\binom{k-r}{r}\frac{I_{k-2r}}{I_k}.
+\end{equation}
+The classical involution asymptotic of Moser and Wyman
+\cite{MoserWyman1955} implies, for fixed $r$,
+\[
+ \frac{I_{k-2r}}{I_k}\sim k^{-r}.
+\]
+Since $r!\binom{k-r}{r}\sim k^r$, every fixed factorial moment in
+Equation~\eqref{eq:factorial-moments} tends to $1$.  These are the factorial
+moments of $\operatorname{Poisson}(1)$.  The first moment makes the family
+tight.  Moreover, for $M>r$,
+\[
+ \mathbb E\!\left[(X_k)_r\mathbf1_{\{X_k>M\}}\right]
+ \le \frac{\mathbb E[(X_k)_{r+1}]}{M-r},
+\]
+so the bounded $(r+1)$st factorial moments make $(X_k)_r$ uniformly
+integrable.  Every subsequential limit therefore has all factorial moments
+equal to one and hence is $\operatorname{Poisson}(1)$.  This proves the
+distributional limit.  Finally, evaluating the distribution functions at
+the continuity point $1/2$ gives
+$\mathbb P(X_k=0)\to e^{-1}$.  The event $X_k=0$ is precisely the class
+counted by $a_k$, yielding Equation~\eqref{eq:e-minus-one}.
+\end{proof}
+
+Equation~\eqref{eq:e-minus-one} proves the limiting-proportion conjecture
+recorded in OEIS~A170941.  It also gives the stable ribbon asymptotic
+immediately from the Moser--Wyman formula.
+
+Combining the fixed-rank and stable results distinguishes the two asymptotic
+regimes.
+
+\begin{corollary}[Finite-rank density and noncommuting limits]
+For every fixed $n\ge3$,
+\begin{equation}\label{eq:fixed-rank-density}
+ \frac{b_{n,k}}{u_{n,k}}\sim
+ \frac{\alpha_n}{n}
+ \left(\frac{\sqrt{n^2-4}}n\right)^{\beta_n-1}
+ \left(\frac{\alpha_n}{n}\right)^k.
+\end{equation}
+In particular,
+\begin{equation}\label{eq:noncommuting-limits}
+ \lim_{n\to\infty}\lim_{k\to\infty}\frac{b_{n,k}}{u_{n,k}}=0,
+ \qquad
+ \lim_{k\to\infty}\lim_{n\to\infty}\frac{b_{n,k}}{u_{n,k}}=e^{-1}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Divide Equation~\eqref{eq:fixed-rank-asymptotic} by
+Equation~\eqref{eq:regev-leading}.  Since $\alpha_n<n$ for every $n\ge3$,
+the fixed-rank limit is zero.  In the reverse order, fixed $k$ enters the
+stable range once $n\ge k$, so the inner limit is $a_k/I_k$; then apply
+Equation~\eqref{eq:e-minus-one}.
+\end{proof}
+
+\section{Further directions}
+
+The original all-$n$ enumeration problem is resolved by
+Theorem~\ref{thm:main}; Theorems~\ref{thm:highest-weight} and
+\ref{thm:fixed-rank-asymptotic}, together with
+Corollary~\ref{cor:near-stable}, give the endpoint refinement, the complete
+fixed-rank leading asymptotic, and every fixed-distance correction below
+stability.  Two natural directions remain.  First, the stable
+involution model suggests that the finite-rank
+numbers should admit a direct positive arc-diagram interpretation with an
+$n$-dependent bounded statistic.  The ordinary
+longest-decreasing-subsequence bound is not that statistic: the candidate
+count is $32$ at $(n,k)=(4,6)$, whereas Theorem~\ref{thm:main} gives
+$b_{4,6}=31$.  The mixed defining/dual walk therefore records a different
+finite-rank quotient.  Second,
+Equation~\eqref{eq:noncommuting-limits} points to a uniform double-scaling
+problem between the fixed-rank and stable regimes.  The proof here keeps $n$
+fixed before $k\to\infty$ and does not supply estimates uniform when both
+parameters grow.
+
+\begingroup
+\footnotesize
+\medskip
+\noindent\textbf{Declaration of Generative AI and AI-assisted technologies in
+the writing process.}\par
+During the preparation of this work, the author used an author-developed local
+implementation of the Proof Engine framework for AI-assisted mathematical
+research.  The implementation operates through replaceable AI-agent and
+harness components; the present work used OpenAI Codex within that
+implementation.  The framework is described in \emph{Proof Engine
+Infrastructure}~\cite{LiProofEngine2026}.  The author reviewed and edited the
+resulting material and assumes full responsibility for the definitions,
+statements, proofs, citations, code, and exposition.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\endgroup
+\end{document}

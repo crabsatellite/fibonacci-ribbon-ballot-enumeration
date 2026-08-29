@@ -1,0 +1,14 @@
+* -text whitespace=cr-at-eol
+*.bib diff
+*.cff diff
+*.gitignore diff
+*.json diff
+*.lean diff
+*.md diff
+*.py diff
+*.ps1 diff
+*.tex diff
+*.toml diff
+*.txt diff
+*.pdf binary
+*.zip binary

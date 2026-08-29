@@ -1,0 +1,186 @@
+import FibonacciRibbonKernel.KernelPublicationRoot
+
+/-!
+# Exact manuscript-label map
+
+Every one of the manuscript's 47 numbered labels is represented by a
+premise-free kernel endpoint below.
+-/
+
+-- Partial support for `lem:column-walk` and `lem:neutral-pairs`.
+#check FibonacciRibbonKernel.letterWeight
+#check FibonacciRibbonKernel.tallWeight
+#check FibonacciRibbonKernel.publication_fullBlockWeight_eq_zero
+#check FibonacciRibbonKernel.publication_tallWeight_eq_neg_letterWeight
+#check FibonacciRibbonKernel.publication_oddBadPair_neutral
+#check FibonacciRibbonKernel.publication_evenBadPair_neutral
+#check FibonacciRibbonKernel.publication_fullBlock_internal_prefix
+#check FibonacciRibbonKernel.publication_tallColumn_internal_prefix
+#check FibonacciRibbonKernel.publication_column_walk
+#check FibonacciRibbonKernel.publication_badPair_full_word
+#check FibonacciRibbonKernel.publication_specifiedBadPair_deletion
+#check FibonacciRibbonKernel.publication_disjointBadPairs_length
+#check FibonacciRibbonKernel.publication_specifiedBadPairs_deletion
+#check FibonacciRibbonKernel.publication_local_obstruction
+#check FibonacciRibbonKernel.publication_mixed_branching_comm
+#check FibonacciRibbonKernel.publication_mixed_branching_outdegree
+#check FibonacciRibbonKernel.publication_standard_tableau_row_word_equiv
+#check FibonacciRibbonKernel.publication_unrestricted_count
+#check FibonacciRibbonKernel.publication_standard_tableau_number_literal
+#check FibonacciRibbonKernel.publication_path_matchings
+#check FibonacciRibbonKernel.publication_path_matching_literal
+#check FibonacciRibbonKernel.publication_path_matching_actual_equiv
+#check FibonacciRibbonKernel.publication_unrestricted_parameter_lists
+#check FibonacciRibbonKernel.publication_matching_intersection_card
+#check FibonacciRibbonKernel.publication_raw_inclusion_exclusion
+#check FibonacciRibbonKernel.publication_main_enumeration
+#check FibonacciRibbonKernel.publication_substitution_denominator_inverse
+#check FibonacciRibbonKernel.publication_exact_substitution
+#check FibonacciRibbonKernel.publication_exact_substitution_dfinite
+#check FibonacciRibbonKernel.publication_inverse_substitution_coeff_odd
+#check FibonacciRibbonKernel.publication_inverse_substitution_coeff_even
+#check FibonacciRibbonKernel.publication_substitutions_compose
+#check FibonacciRibbonKernel.publication_inverse_substitution
+#check FibonacciRibbonKernel.publication_regev_constant
+#check FibonacciRibbonKernel.publication_rank_two_exact
+#check FibonacciRibbonKernel.publication_fixed_rank_local_geometry
+#check FibonacciRibbonKernel.publication_fixed_rank_asymptotic
+#check FibonacciRibbonKernel.publication_fixed_rank_ribbon_asymptotic
+#check FibonacciRibbonKernel.publication_regev_leading
+#check FibonacciRibbonKernel.publication_fixed_rank_density
+#check FibonacciRibbonKernel.publication_forward_iterated_density_limit
+#check FibonacciRibbonKernel.publication_noncommuting_limits
+#check FibonacciRibbonKernel.publication_height_five_bessel_recurrence
+#check FibonacciRibbonKernel.publication_height_six_bessel_recurrence
+#check FibonacciRibbonKernel.publication_reverse_iterated_density_limit
+#check FibonacciRibbonKernel.publication_special_rank_constants
+#check FibonacciRibbonKernel.publication_special_rank_ribbon_asymptotics
+#check FibonacciRibbonKernel.publication_special_rank_density_asymptotics
+#check FibonacciRibbonKernel.publication_special_rank_density_limits
+#check FibonacciRibbonKernel.publication_general_weyl_gessel_analytic
+#check FibonacciRibbonKernel.publication_tail_tableaux
+#check FibonacciRibbonKernel.publication_tableau_conjugation
+#check FibonacciRibbonKernel.publication_near_stable_tableau_defect
+#check FibonacciRibbonKernel.publication_endpoint_matching_contraction
+#check FibonacciRibbonKernel.publication_highest_weight_combinatorial
+#check FibonacciRibbonKernel.publication_mixed_schur_multiplicity
+#check FibonacciRibbonKernel.publication_highest_weight_schur
+#check FibonacciRibbonKernel.publication_bessel_generators
+#check FibonacciRibbonKernel.publication_bessel_finite_system
+#check FibonacciRibbonKernel.publication_odd_bessel_finite_system
+#check FibonacciRibbonKernel.publication_bessel_ordinary_system_even
+#check FibonacciRibbonKernel.publication_bessel_ordinary_system_odd
+#check FibonacciRibbonKernel.publication_bessel_scales
+#check FibonacciRibbonKernel.publication_height_five_sum
+#check FibonacciRibbonKernel.publication_height_six_sum
+#check FibonacciRibbonKernel.publication_gessel_bessel_determinants
+#check FibonacciRibbonKernel.publication_five_row_minor_summation
+#check FibonacciRibbonKernel.publication_six_row_exterior_minor_summation
+#check FibonacciRibbonKernel.publication_six_row_top_minor_summation
+#check FibonacciRibbonKernel.publication_height_six_actual_recurrence
+#check FibonacciRibbonKernel.publication_frobenius_factorial_determinant
+#check FibonacciRibbonKernel.publication_height_five_frobenius_pfaffian_bridge
+#check FibonacciRibbonKernel.publication_height_five_pair_bessel_base
+#check FibonacciRibbonKernel.publication_height_five_pair_bessel_second
+#check FibonacciRibbonKernel.publication_height_five_actual_recurrence
+#check FibonacciRibbonKernel.publication_height_four_catalan
+#check FibonacciRibbonKernel.publication_height_four_sum
+#check FibonacciRibbonKernel.publication_height_four_actual_recurrence
+#check FibonacciRibbonKernel.publication_regev_leading_four
+#check FibonacciRibbonKernel.publication_height_four_dfinite_certificates
+#check FibonacciRibbonKernel.publication_height_four_ribbon_recurrence
+#check FibonacciRibbonKernel.publication_height_four_characteristic_indicial
+#check FibonacciRibbonKernel.publication_general_shifted_partition_equiv
+#check FibonacciRibbonKernel.publication_general_frobenius_minor_series
+#check FibonacciRibbonKernel.publication_general_exterior_minor_summation
+#check FibonacciRibbonKernel.publication_general_pair_coordinates
+#check FibonacciRibbonKernel.publication_general_pair_bessel
+#check FibonacciRibbonKernel.publication_general_pair_polynomial_reduction
+#check FibonacciRibbonKernel.publication_general_pfaffian_assembly
+#check FibonacciRibbonKernel.publication_general_exterior_coefficient_bridge
+#check FibonacciRibbonKernel.publication_general_coordinate_assembly
+#check FibonacciRibbonKernel.publication_general_closed_bessel_bridge
+#check FibonacciRibbonKernel.publication_general_closed_scalar_ode
+#check FibonacciRibbonKernel.publication_general_factorial_egf_shifted_scalar_ode
+#check FibonacciRibbonKernel.publication_general_factorial_egf_scalar_ode
+#check FibonacciRibbonKernel.publication_regev_hook_product
+#check FibonacciRibbonKernel.publication_regev_lattice_sum
+#check FibonacciRibbonKernel.publication_regev_source_normalization
+#check FibonacciRibbonKernel.publication_regev_local_limit
+#check FibonacciRibbonKernel.publication_regev_domination
+#check FibonacciRibbonKernel.publication_regev_complete_domination
+#check FibonacciRibbonKernel.publication_regev_quadratic_truncated_riemann
+#check FibonacciRibbonKernel.publication_regev_quadratic_full_limit
+#check FibonacciRibbonKernel.publication_regev_all_size_full_limit
+#check FibonacciRibbonKernel.publication_regev_integral_coefficient_limit
+#check FibonacciRibbonKernel.publication_regev_mehta_standard_equivalence
+#check FibonacciRibbonKernel.publication_involution_recurrence
+#check FibonacciRibbonKernel.publication_involution_cycles_are_pairs
+#check FibonacciRibbonKernel.publication_rsk_involution_tableau_equiv
+#check FibonacciRibbonKernel.publication_involution_tableaux
+#check FibonacciRibbonKernel.publication_stable_transform_ie
+#check FibonacciRibbonKernel.publication_stable_transform_recurrence
+#check FibonacciRibbonKernel.publication_actual_involution_card
+#check FibonacciRibbonKernel.publication_stable_involution_ie
+#check FibonacciRibbonKernel.publication_stable_involution_recurrence
+#check FibonacciRibbonKernel.publication_stable_range
+#check FibonacciRibbonKernel.publication_near_stable_defect
+#check FibonacciRibbonKernel.publication_first_near_stable_strip
+#check FibonacciRibbonKernel.publication_second_near_stable_strip
+#check FibonacciRibbonKernel.publication_third_near_stable_strip
+#check FibonacciRibbonKernel.publication_fourth_near_stable_strip
+#check FibonacciRibbonKernel.publication_near_stable_polynomiality
+#check FibonacciRibbonKernel.publication_factorial_moments
+#check FibonacciRibbonKernel.publication_factorial_moment_limit
+#check FibonacciRibbonKernel.publication_e_minus_one
+#check FibonacciRibbonKernel.publication_poisson_distribution
+#check FibonacciRibbonKernel.publication_hook_carrier
+#check FibonacciRibbonKernel.publication_hook_formula
+
+-- KERNEL: eq:local-obstruction -> publication_local_obstruction
+-- KERNEL: lem:column-walk -> publication_column_walk
+-- KERNEL: lem:mixed-branching -> publication_mixed_branching_comm
+-- KERNEL: thm:unrestricted -> publication_unrestricted_count
+-- KERNEL: eq:unrestricted -> publication_unrestricted_count
+-- KERNEL: eq:hook -> publication_hook_formula
+-- KERNEL: lem:neutral-pairs -> publication_specifiedBadPairs_deletion
+-- KERNEL: eq:path-matchings -> publication_path_matchings
+-- KERNEL: thm:main -> publication_main_enumeration
+-- KERNEL: eq:main -> publication_main_enumeration
+-- KERNEL: eq:mixed-schur-multiplicity -> publication_mixed_schur_multiplicity
+-- KERNEL: thm:highest-weight -> publication_highest_weight_schur
+-- KERNEL: eq:highest-weight -> publication_highest_weight_schur
+-- KERNEL: thm:substitution -> publication_exact_substitution_dfinite
+-- KERNEL: eq:substitution -> publication_exact_substitution
+-- KERNEL: eq:inverse-substitution -> publication_inverse_substitution
+-- KERNEL: eq:regev-constant -> publication_regev_constant
+-- KERNEL: thm:fixed-rank-asymptotic -> publication_fixed_rank_asymptotic
+-- KERNEL: eq:fixed-rank-asymptotic -> publication_fixed_rank_ribbon_asymptotic
+-- KERNEL: eq:regev-leading -> publication_regev_leading
+-- KERNEL: eq:bessel-system -> publication_bessel_finite_system
+-- KERNEL: eq:bessel-scales -> publication_bessel_scales
+-- KERNEL: eq:ordinary-bessel-system -> publication_bessel_ordinary_system_even
+-- KERNEL: cor:n-four -> publication_special_rank_ribbon_asymptotics
+-- KERNEL: eq:n-four-sum -> publication_height_four_sum
+-- KERNEL: eq:n-four-asymptotic -> publication_special_rank_ribbon_asymptotics
+-- KERNEL: cor:n-five -> publication_special_rank_ribbon_asymptotics
+-- KERNEL: eq:height-five-recurrence -> publication_height_five_actual_recurrence
+-- KERNEL: eq:n-five-sum -> publication_height_five_sum
+-- KERNEL: eq:n-five-asymptotic -> publication_special_rank_ribbon_asymptotics
+-- KERNEL: cor:n-six -> publication_special_rank_ribbon_asymptotics
+-- KERNEL: eq:height-six-recurrence -> publication_height_six_actual_recurrence
+-- KERNEL: eq:n-six-sum -> publication_height_six_sum
+-- KERNEL: eq:n-six-asymptotic -> publication_special_rank_ribbon_asymptotics
+-- KERNEL: eq:involution-tableaux -> publication_involution_tableaux
+-- KERNEL: cor:stable -> publication_stable_range
+-- KERNEL: eq:stable-ie -> publication_stable_involution_ie
+-- KERNEL: eq:tail-tableaux -> publication_tail_tableaux
+-- KERNEL: cor:near-stable -> publication_near_stable_defect
+-- KERNEL: eq:near-stable-defect -> publication_near_stable_defect
+-- KERNEL: eq:first-near-stable-strips -> publication_first_near_stable_strip
+-- KERNEL: eq:stable-recurrence -> publication_stable_involution_recurrence
+-- KERNEL: thm:poisson -> publication_poisson_distribution
+-- KERNEL: eq:e-minus-one -> publication_e_minus_one
+-- KERNEL: eq:factorial-moments -> publication_factorial_moments
+-- KERNEL: eq:fixed-rank-density -> publication_fixed_rank_density
+-- KERNEL: eq:noncommuting-limits -> publication_noncommuting_limits

@@ -1,0 +1,25 @@
+name = "FibonacciRibbon"
+version = "1.0.0"
+keywords = ["algebraic-combinatorics", "fibonacci-ribbons", "lean4", "formal-verification"]
+defaultTargets = ["FibonacciRibbonKernel.CurrentKernelRoot"]
+packagesDir = "p"
+buildDir = "b"
+
+[leanOptions]
+autoImplicit = false
+pp.unicode.fun = true
+warningAsError = true
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "6f6d267d6dab648062ec50502204cf512cd7274f"
+
+[[require]]
+name = "KostkaNumbers"
+git = "https://github.com/NoahW314/KostkaNumbers.git"
+rev = "135e49269833f4a760717b30777046d9629240df"
+
+[[lean_lib]]
+name = "FibonacciRibbonKernel"
+weakLeanArgs = ["--trust=0"]

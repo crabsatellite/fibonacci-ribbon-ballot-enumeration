@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this paper or formalization, please cite the repository and the manuscript."
+title: "Exact Enumeration and Fixed-Rank Asymptotics of Ballot-Admissible Fibonacci Ribbons"
+type: software
+authors:
+  - family-names: Li
+    given-names: Alex Chengyu
+    orcid: "https://orcid.org/0009-0008-4516-8946"
+    email: cl7076@nyu.edu
+version: 1.0.0
+date-released: 2026-08-29
+repository-code: "https://github.com/crabsatellite/fibonacci-ribbon-ballot-enumeration"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Li
+      given-names: Alex Chengyu
+      orcid: "https://orcid.org/0009-0008-4516-8946"
+  title: "Exact Enumeration and Fixed-Rank Asymptotics of Ballot-Admissible Fibonacci Ribbons"
+  year: 2026
+  doi: "10.5281/zenodo.22104113"
