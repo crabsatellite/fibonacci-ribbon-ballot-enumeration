@@ -29,8 +29,8 @@ of Ballot-Admissible Fibonacci Ribbon Tableaux}
 \begin{minipage}{0.88\textwidth}
 \textbf{Formalization status.}
 All 47 numbered theorem, corollary, lemma, and equation labels have
-premise-free publication endpoints in the accompanying
-\href{https://github.com/crabsatellite/fibonacci-ribbon-ballot-enumeration}{Lean~4 development}.
+premise-free publication endpoints in the accompanying Lean~4
+development~\cite{LiFibonacciRibbonLean2026}.
 The complete publication root is checked with \texttt{--trust=0}; its axiom
 audit reports only \texttt{propext}, \texttt{Classical.choice}, and
 \texttt{Quot.sound}.
@@ -57,8 +57,8 @@ a ballot-neutral block; endpoint-preserving contraction and
 inclusion--exclusion give both the formula and a highest-weight refinement in
 explicit Schur coefficients.
 
-The resulting generating-function substitution, together with Gessel's
-finite-dimensional Bessel system and Regev's strip asymptotics, yields an
+The resulting generating-function substitution, together with exact Weyl
+integral representations and Regev's strip asymptotics, yields an
 explicit constant $K_n>0$ such that, for every fixed $n\ge3$,
 \[
  b_{n,k}\sim K_n
@@ -97,8 +97,8 @@ the answer.
 The contraction preserves the final dominant weight, which yields a
 highest-weight refinement in explicit Schur coefficients.  The ordinary
 generating function is obtained from the bounded-tableau series by a rational
-substitution.  Combining this substitution with Gessel's finite-dimensional
-Bessel system and Regev's strip asymptotics gives, for every fixed $n\ge3$,
+substitution.  Combining this substitution with exact Weyl integral
+representations and Regev's strip asymptotics gives, for every fixed $n\ge3$,
 an explicit constant $K_n$ such that
 \[
  b_{n,k}\sim K_n
@@ -354,8 +354,7 @@ to normalized $SL_n$ highest weight $\mu$ exactly when
 $\lambda=\mu+(q^n)$ for some $q\ge0$.  Homogeneous degree forces
 $|\lambda|=r+(n-1)s$, so $q$ is the unique integer in
 Equation~\eqref{eq:mixed-schur-multiplicity}.  The Pieri branching paths to
-$\mu$ are therefore counted by $M_{r,s}^{(n)}(\mu)$
-\cite{StanleyEC2}.
+$\mu$ are therefore counted by $M_{r,s}^{(n)}(\mu)$.
 
 Every selected bad adjacency contains one defining and one dual column.
 Deleting its full-alphabet block changes $(a,c)$ to $(a-1,c-1)$ but has zero
@@ -421,7 +420,7 @@ gives
 \end{align*}
 For fixed $n$, the bounded-height tableau sequence $u_{n,m}$ is
 $P$-recursive; equivalently its generating function is D-finite
-\cite{Gessel1990}.  D-finite series are closed under multiplication by a
+\cite{BergeronGascon2000}.  D-finite series are closed under multiplication by a
 rational function and algebraic substitution, proving the last assertion.
 \end{proof}
 
@@ -444,8 +443,45 @@ which is exactly the peakless-Motzkin decomposition used in
 \cite{Tenn2026}.  For $n=2$, the same substitution reduces to
 $B_2(z)=1/(1-z)$, agreeing with $b_{2,k}=1$.
 
-The substitution in fact transfers the complete leading strip asymptotic in
-every fixed rank.  Put
+The finite-dimensional Bessel system remains useful for exact recurrences.
+Let
+\[
+ Y_n(x)=\sum_{k\ge0}u_{n,k}\frac{x^k}{k!},
+ \qquad
+ J_r(x)=\sum_{m\ge0}\frac{x^{2m+r}}{m!(m+r)!}.
+\]
+Writing $d=\lfloor n/2\rfloor$, Gessel's determinant in the simplified form
+of Bergeron and Gascon places $Y_n$ in the $\mathbb C(x)$-span
+\[
+ \{J_0^aJ_1^{d-a}:0\le a\le d\}
+\]
+when $n=2d$, and in $e^x$ times this span when $n=2d+1$
+\cite{BergeronGascon2000}.  The identities
+\[
+ J_0'=2J_1,
+ \qquad
+ J_1'=2J_0-x^{-1}J_1
+\]
+give a basis vector $\mathbf F$ satisfying
+\begin{equation}\label{eq:bessel-system}
+ \mathbf F'(x)=(M_0+x^{-1}M_1)\mathbf F(x),
+\end{equation}
+where the eigenvalues of $M_0$ are
+\begin{equation}\label{eq:bessel-scales}
+ n,n-4,n-8,\ldots,n-4d.
+\end{equation}
+If $\mathbf F=\sum_{k\ge0}\mathbf f_kx^k/k!$ and
+$\widehat{\mathbf F}(z)=\sum_{k\ge0}\mathbf f_kz^k$, coefficient comparison
+gives
+\begin{equation}\label{eq:ordinary-bessel-system}
+ z(I-zM_0)\widehat{\mathbf F}'(z)
+ =(M_1+zM_0)\widehat{\mathbf F}(z)-M_1\mathbf f_0.
+\end{equation}
+This system produces the specialized recurrences below.  The asymptotic
+argument will instead use the exact Weyl integral carrier, so that its proof
+follows the same route as the accompanying formalization.
+
+Put
 \[
  \beta_n=\frac{n(n-1)}4,
  \qquad
@@ -473,89 +509,100 @@ Regev's strip theorem, with the Mehta integral evaluated explicitly, gives
 \begin{equation}\label{eq:regev-leading}
  u_{n,k}\sim C_n n^k k^{-\beta_n}
 \end{equation}
-\cite{Regev1981,Matsumoto2008}.  It remains to justify that no other
-singularity becomes dominant under Equation~\eqref{eq:substitution}.
+\cite{Regev1981,Matsumoto2008}.
 
-Let
+We now compare two exact Weyl moments.  Put $d=\lfloor n/2\rfloor$ and, for
+$\theta=(\theta_1,\ldots,\theta_d)\in[0,\pi]^d$, write
 \[
- Y_n(x)=\sum_{k\ge0}u_{n,k}\frac{x^k}{k!},
+ \Delta_c(\theta)=\prod_{1\le i<j\le d}
+   (\cos\theta_j-\cos\theta_i)^2.
+\]
+For $n=2d$, set
+\[
+ S_n(\theta)=2\sum_{i=1}^d\cos\theta_i,
  \qquad
- J_r(x)=\sum_{m\ge0}\frac{x^{2m+r}}{m!(m+r)!}.
-\]
-Write $d=\lfloor n/2\rfloor$.  Gessel's determinant, in the simplified form
-of Bergeron and Gascon, places $Y_n$ in the $\mathbb C(x)$-span
-\[
- \{J_0^aJ_1^{d-a}:0\le a\le d\}
-\]
-when $n=2d$, and in $e^x$ times this span when $n=2d+1$
-\cite{Gessel1990,BergeronGascon2000}.  The coefficients may be taken to be
-Laurent polynomials in $x$: the recurrence reducing every $J_r$ to $J_0,J_1$
-introduces only powers of $x^{-1}$.  The identities
-\[
- J_0'=2J_1,
+ W_n(\theta)=\Delta_c(\theta)\prod_{i=1}^d(1+\cos\theta_i),
  \qquad
- J_1'=2J_0-x^{-1}J_1
+ \kappa_n=\frac{2^{d^2-d}}{d!\,\pi^d};
 \]
-therefore give a basis vector $\mathbf F$ satisfying an exact system
-\begin{equation}\label{eq:bessel-system}
- \mathbf F'(x)=(M_0+x^{-1}M_1)\mathbf F(x)
-\end{equation}
-for constant matrices $M_0,M_1$.  In the basis generated by
-$J_0+J_1$ and $J_0-J_1$, the eigenvalues of $M_0$ are
-\begin{equation}\label{eq:bessel-scales}
- n,n-4,n-8,\ldots,n-4d.
-\end{equation}
-Indeed the two generators have limiting derivative eigenvalues $2$ and
-$-2$, and the odd case adds the derivative eigenvalue $1$ of $e^x$.
+for $n=2d+1$, set
+\[
+ S_n(\theta)=1+2\sum_{i=1}^d\cos\theta_i,
+ \qquad
+ W_n(\theta)=\Delta_c(\theta)
+   \prod_{i=1}^d(1-\cos\theta_i)(1+\cos\theta_i),
+ \qquad
+ \kappa_n=\frac{2^{d^2}}{d!\,\pi^d}.
+\]
+Let $P_0(s)=1$, $P_1(s)=s$, and
+$P_{k+2}(s)=sP_{k+1}(s)-P_k(s)$.  The Weyl integral form of Gessel's identity,
+together with the finite transform in Equation~\eqref{eq:substitution}, gives
+the exact identities
+\[
+ u_{n,k}=\kappa_n\int_{[0,\pi]^d}S_n(\theta)^kW_n(\theta)\,d\theta,
+ \qquad
+ b_{n,k}=\kappa_n\int_{[0,\pi]^d}P_k(S_n(\theta))W_n(\theta)\,d\theta.
+\]
+The second identity is coefficientwise: the recurrence for $P_k$ is exactly
+the finite Fibonacci transform induced by the rational substitution.
 
-Expand $\mathbf F=\sum_{k\ge0}\mathbf f_kx^k/k!$ and put
-$\widehat{\mathbf F}(z)=\sum_{k\ge0}\mathbf f_kz^k$.  Multiplying
-Equation~\eqref{eq:bessel-system} by $x$ and comparing coefficients gives
+The positive maximum of $S_n$ is $n$, attained at $\theta=0$.  With
+$\theta=x/\sqrt{k}$, uniformly for $x$ in compact subsets of the positive
+orthant,
 \[
- (kI-M_1)\mathbf f_k=kM_0\mathbf f_{k-1}.
+ \left(\frac{S_n(x/\sqrt{k})}{n}\right)^k
+   \longrightarrow \exp\!\left(-\frac{\lVert x\rVert^2}{n}\right).
 \]
-After summation,
-\begin{equation}\label{eq:ordinary-bessel-system}
- z(I-zM_0)\widehat{\mathbf F}'(z)
- =(M_1+zM_0)\widehat{\mathbf F}(z)-M_1\mathbf f_0.
-\end{equation}
-Multiplication by a Laurent monomial in the exponential-generating variable
-becomes a finite combination of shifts, derivatives, and integrals of the
-ordinary generating function; it introduces no new nonzero finite
-singularity.  Consequently every nonzero finite singularity of $U_n$ belongs to
+For $s>2$, put $a(s)=(s+\sqrt{s^2-4})/2$.  The recurrence gives
 \[
- \left\{\frac1{n-4j}:0\le j\le d,\ n-4j\ne0\right\}.
-\]
-These are regular singularities, so their coefficient contributions are
-finite sums of the standard power--logarithm forms.
-Equation~\eqref{eq:regev-leading} and Pringsheim's theorem identify $1/n$ as
-the leading positive singularity and fix its leading coefficient term.
-When $n$ is even, $-1/n$ is the only other point of the same modulus; its
-coefficient contribution is of lower order, since otherwise the even and
-odd subsequences would contradict the common asymptotic
-Equation~\eqref{eq:regev-leading}.  Every remaining scale has modulus
-strictly smaller than $n$.
-
-Let $w(z)=z/(1+z^2)$ and $\rho_n=\alpha_n^{-1}$.  The positive singularity
-$1/n$ has the simple preimage $\rho_n$.  For a nonzero scale $\lambda$ with
-$|\lambda|<n$, the closest preimage of $1/\lambda$ has modulus
-\[
- \frac{2}{|\lambda|+\sqrt{\lambda^2-4}}>\rho_n
-\]
-when $|\lambda|\ge2$, and modulus one when $|\lambda|\le2$.  Thus every
-smaller scale has all its preimages at strictly larger modulus.  The possible
-point $-1/n$ maps to $-\rho_n$ and remains of lower coefficient order.  At
-the positive point,
-\[
- \frac{\rho_n w'(\rho_n)}{1/n}=\frac{\sqrt{n^2-4}}n,
+ P_k(s)=\frac{a(s)^{k+1}-a(s)^{-k-1}}{\sqrt{s^2-4}},
  \qquad
- \frac1{1+\rho_n^2}=\frac{\alpha_n}{n}.
+ \frac{d}{ds}\log a(s)=\frac1{\sqrt{s^2-4}}.
 \]
-The standard power--logarithm transfer theorem
-\cite[Chapter~VI]{FlajoletSedgewick2009}, including its logarithmic form when
-$\beta_n$ is an integer, therefore multiplies the coefficient constant $C_n$
-by the two factors displayed in
-Equation~\eqref{eq:fixed-rank-asymptotic}.  This proves the result.
+Hence
+\[
+ \frac{P_k(S_n(x/\sqrt{k}))}{P_k(n)}
+   \longrightarrow
+   \exp\!\left(-\frac{\lVert x\rVert^2}{\sqrt{n^2-4}}\right).
+\]
+
+Under the same scaling, the Weyl weight and the Jacobian contribute
+$k^{-\beta_n}Q_n(x)\,dx$, where $Q_n$ is a nonnegative homogeneous polynomial
+of degree $2\beta_n-d$.  The elementary quadratic bounds for $1-\cos t$ and
+the concavity of $\log a(S_n(\theta))$ near zero give an integrable Gaussian
+envelope, so dominated convergence applies.  Outside a fixed neighborhood of
+zero and, in even rank, the all-minus point, $|S_n|$ is bounded away from $n$
+and the contribution is exponentially smaller.  At the even-rank all-minus
+point, the factor $\prod_i(1+\cos\theta_i)$ vanishes and makes that
+same-scale contribution lower order.  This also covers the one-dimensional $n=3$ case,
+where the negative endpoint has absolute scale $1<3$.
+
+Define
+\[
+ I_n(c)=\int_{\mathbb R_+^d}e^{-c\lVert x\rVert^2}Q_n(x)\,dx.
+\]
+The preceding limits and Equation~\eqref{eq:regev-leading} give
+\[
+ \kappa_n I_n(1/n)=C_n,
+ \qquad
+ \frac{b_{n,k}}{P_k(n)k^{-\beta_n}}
+   \longrightarrow \kappa_n I_n(1/\sqrt{n^2-4}).
+\]
+Since $Q_n$ has degree $2\beta_n-d$, scalar change of variables yields
+\[
+ \frac{I_n(1/\sqrt{n^2-4})}{I_n(1/n)}
+ =\left(\frac{\sqrt{n^2-4}}{n}\right)^{\beta_n}.
+\]
+Finally,
+\[
+ P_k(n)\sim\frac{\alpha_n^{k+1}}{\sqrt{n^2-4}}.
+\]
+Combining the last three displays gives
+\[
+ K_n=C_n\frac{\alpha_n}{n}
+ \left(\frac{\sqrt{n^2-4}}{n}\right)^{\beta_n-1},
+\]
+which is Equation~\eqref{eq:fixed-rank-asymptotic}.
 \end{proof}
 
 The first dimension left open by Tenn admits a particularly explicit form.
@@ -580,12 +627,12 @@ Moreover,
 \end{corollary}
 
 \begin{proof}
-The bounded-height tableau formula
+The hook-length sum gives the bounded-height tableau formula
 \[
- u_{4,2r}=C_rC_{r+1},\qquad u_{4,2r+1}=C_{r+1}^2
+ u_{4,2r}=C_rC_{r+1},\qquad u_{4,2r+1}=C_{r+1}^2.
 \]
-is classical \cite{GouyouBeauchamps1989}.  Substitution in
-Theorem~\ref{thm:main} gives Equation~\eqref{eq:n-four-sum}.
+Substitution in Theorem~\ref{thm:main} gives
+Equation~\eqref{eq:n-four-sum}.
 Equation~\eqref{eq:regev-constant} gives $C_4=32/\pi$.  Applying
 Theorem~\ref{thm:fixed-rank-asymptotic}, with
 $\beta_4=3$, $\alpha_4=2+\sqrt3$, and
@@ -682,8 +729,7 @@ gives the constant in Equation~\eqref{eq:n-six-asymptotic}.
 
 Let $I_k$ be the number of involutions of $[k]$.  Robinson--Schensted gives a
 bijection between involutions and standard Young tableaux, because an
-involution has equal insertion and recording tableaux
-\cite{Sagan2001,StanleyEC2}.  Thus
+involution has equal insertion and recording tableaux.  Thus
 \begin{equation}\label{eq:involution-tableaux}
  I_k=\sum_{\lambda\vdash k}f^\lambda,
  \qquad I_k=I_{k-1}+(k-1)I_{k-2}.
@@ -776,8 +822,7 @@ Pascal's identity, gives the useful recurrence
 with $a_0=a_1=a_2=1$ and $a_3=2$.
 
 For $n=3$, the standard arc representation identifies the peakless Motzkin
-specialization with noncrossing involutions having no adjacent transposition;
-see also the RNA arc-diagram setting of \cite{GilLopez2023}.
+specialization with noncrossing involutions having no adjacent transposition.
 
 \section{The limiting proportion}
 

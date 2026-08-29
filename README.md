@@ -6,7 +6,8 @@ kernel-only formalization for:
 > Alex Chengyu Li, *Exact Enumeration and Fixed-Rank Asymptotics of
 > Ballot-Admissible Fibonacci Ribbon Tableaux* (2026).
 
-The public preprint is [Zenodo 10.5281/zenodo.22104113](https://doi.org/10.5281/zenodo.22104113).
+The versioned public preprint is maintained under
+[Zenodo concept DOI 10.5281/zenodo.22103759](https://doi.org/10.5281/zenodo.22103759).
 
 ## Formalized result
 
@@ -29,12 +30,12 @@ and `Quot.sound`.
 
 ## Version relationship
 
-The repository PDF is the 29 August 2026 formalization-complete revision. Its
-mathematical statements and proofs are unchanged from Zenodo V2; the revision
-adds "Tableaux" to the title, sharpens two abstract sentences, updates the
-first-page formalization status, and adds the companion repository link.
-Zenodo V2 remains the earlier priority record until a later preprint version
-is deposited.
+The repository PDF is the 29 August 2026 formalization-complete revision. The
+exact enumeration and every theorem statement are unchanged from the earlier
+priority record. Release v1.2.0 replaces the compressed singularity-transfer
+argument for the fixed-rank theorem with the exact Weyl-moment and Gaussian
+transport route consumed by the Lean publication root. It also cites this
+repository directly from the manuscript.
 
 ## Build from source
 
@@ -67,7 +68,7 @@ source and a `--trust=0` kernel build remain canonical.
 
 ## Contents
 
-- `paper/`: TeX, bibliography, and the Zenodo V2 PDF.
+- `paper/`: current TeX, bibliography, and repository PDF.
 - `lean4/FibonacciRibbonKernel/`: complete proof source.
 - `FORMULA_MAP.md`: one-to-one map for all 47 manuscript labels.
 - `scripts/restore-olean-cache.ps1`: hash-checked cache restoration.
