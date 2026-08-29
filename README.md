@@ -1,10 +1,10 @@
-# Ballot-Admissible Fibonacci Ribbons
+# Ballot-Admissible Fibonacci Ribbon Tableaux
 
 This repository contains the public manuscript and complete Lean 4
 kernel-only formalization for:
 
 > Alex Chengyu Li, *Exact Enumeration and Fixed-Rank Asymptotics of
-> Ballot-Admissible Fibonacci Ribbons* (2026).
+> Ballot-Admissible Fibonacci Ribbon Tableaux* (2026).
 
 The public preprint is [Zenodo 10.5281/zenodo.22104113](https://doi.org/10.5281/zenodo.22104113).
 
@@ -31,9 +31,10 @@ and `Quot.sound`.
 
 The repository PDF is the 29 August 2026 formalization-complete revision. Its
 mathematical statements and proofs are unchanged from Zenodo V2; the revision
-updates the first-page formalization status and adds the companion repository
-link. Zenodo V2 remains the earlier priority record until a later preprint
-version is deposited.
+adds "Tableaux" to the title, sharpens two abstract sentences, updates the
+first-page formalization status, and adds the companion repository link.
+Zenodo V2 remains the earlier priority record until a later preprint version
+is deposited.
 
 ## Build from source
 

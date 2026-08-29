@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-TEX = ROOT / "paper" / "fibonacci_ribbon_enumeration.tex"
+TEX = ROOT / "paper" / "fibonacci_ribbon_tableaux_enumeration.tex"
 HUMAN_MAP = ROOT / "FORMULA_MAP.md"
 LEAN_MAP = ROOT / "lean4" / "FibonacciRibbonKernel" / "ManuscriptFormulaMap.lean"
 

@@ -14,11 +14,11 @@
 \newcommand{\ellp}{\ell}
 
 \title{Exact Enumeration and Fixed-Rank Asymptotics\\
-of Ballot-Admissible Fibonacci Ribbons}
+of Ballot-Admissible Fibonacci Ribbon Tableaux}
 \author{Alex Chengyu Li}
 \date{29 August 2026}
 \hypersetup{
-  pdftitle={Exact Enumeration and Fixed-Rank Asymptotics of Ballot-Admissible Fibonacci Ribbons},
+  pdftitle={Exact Enumeration and Fixed-Rank Asymptotics of Ballot-Admissible Fibonacci Ribbon Tableaux},
   pdfauthor={Alex Chengyu Li}
 }
 
@@ -40,8 +40,9 @@ audit reports only \texttt{propext}, \texttt{Classical.choice}, and
 
 \begin{abstract}
 Tenn asked for the enumeration of ballot-admissible Fibonacci ribbon
-tableaux beyond the three-letter case.  We give an exact formula for every
-alphabet size.  If $b_{n,k}$ denotes the number of ballot-admissible
+tableaux beyond the three-letter case.  We solve this problem and
+simultaneously cover every alphabet size $n\ge2$ by proving the following
+exact formula.  If $b_{n,k}$ denotes the number of ballot-admissible
 $\operatorname{Fib}(n,k)$ ribbons and $f^\lambda$ is the number of standard
 Young tableaux of shape $\lambda$, then
 \[
@@ -67,7 +68,8 @@ For $n\ge k$, the count stabilizes to involutions with no adjacent
 transposition.  Their number is asymptotic to $e^{-1}$ times the involution
 number, proving a conjecture recorded in OEIS~A170941.  More generally, for
 each fixed $r$, the defect on the line $n=k-r$ is eventually a polynomial in
-$k$ of degree $r-1$ with an explicit leading coefficient.
+$k$ of degree $r-1$ with leading coefficient $I_{r-1}/(r-1)!$, where $I_m$
+is the $m$th involution number.
 \end{abstract}
 
 \section{Introduction}

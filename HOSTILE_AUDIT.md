@@ -12,7 +12,7 @@ fidelity, release reproducibility, and the convenience cache.
 - Formal root: `FibonacciRibbonKernel.CurrentKernelRoot`.
 - Publication surface: `KernelPublicationRoot.lean`, `KernelTheoremMap.lean`,
   `ManuscriptFormulaMap.lean`, and `KernelAxiomAudit.lean`.
-- Release cache: the Windows x86-64 `.olean` archive attached to `v1.0.1`.
+- Release cache: the Windows x86-64 `.olean` archive attached to `v1.1.0`.
 
 ## Adversarial checks performed
 
